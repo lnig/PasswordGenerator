@@ -4,18 +4,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URI;
 import java.net.URL;
 import java.security.SecureRandom;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import static java.security.spec.MGF1ParameterSpec.SHA256;
 
 public class HelloController implements Initializable {
     @FXML
@@ -53,8 +52,6 @@ public class HelloController implements Initializable {
     private String numbers = "0123456789";
     private String symbols = "!@#$%^&*()-_";
 
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         close.setOnMouseClicked(mouseEvent ->{
@@ -73,9 +70,19 @@ public class HelloController implements Initializable {
             int value = newValue.intValue();
             lengthText.setText("Length: " + value);
         });
+
+        typeCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
+
+           lengthSlider.setMax(50);
+
+           if (newValue.toString().equals("WORDS")){
+               lengthSlider.setMax(20);
+           }
+        });
+
     }
 
-    public void generate(ActionEvent actionEvent) {
+    public void generate(ActionEvent actionEvent) throws FileNotFoundException {
 
        StringBuilder pass = new StringBuilder();
        StringBuilder availableChars = new StringBuilder();
@@ -95,10 +102,41 @@ public class HelloController implements Initializable {
        }
 
        int passLength = (int) lengthSlider.getValue();
+       passType choosenPassType = typeCombo.getValue();
 
-       for (int i = 0; i < passLength; i++){
-           int index = random.nextInt(availableChars.length());
-           pass.append(availableChars.charAt(index));
+       if (choosenPassType == null || passLength == 0){
+           Alert alert = new Alert(Alert.AlertType.WARNING);
+           alert.setHeaderText("Ostrzezenie");
+           alert.setContentText("Wybierz typ hasła i liczbe znakow");
+           alert.showAndWait();
+       }else {
+           if (choosenPassType == passType.RANDOM) {
+               for (int i = 0; i < passLength; i++) {
+                   int index = random.nextInt(availableChars.length());
+                   pass.append(availableChars.charAt(index));
+               }
+           } else {
+
+               File file = new File("src/main/resources/org/lnig/passwordgenerator/words_alpha.txt");
+               Scanner sc = new Scanner(file);
+
+               List<String> words = new ArrayList<>();
+               String readedWord;
+
+               while (sc.hasNextLine()) {
+                   readedWord = sc.nextLine();
+                   words.add(readedWord);
+               }
+
+               if (!words.isEmpty()) {
+                   do {
+                       int index = random.nextInt(words.size());
+                       readedWord = words.get(index);
+                   }while(readedWord.length() != passLength);
+
+                   pass.append(readedWord);
+               }
+           }
        }
 
        generatedPass.setText(pass.toString());

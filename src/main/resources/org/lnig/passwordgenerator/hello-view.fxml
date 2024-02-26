@@ -60,7 +60,7 @@
       <ComboBox fx:id="typeCombo" layoutX="405.0" layoutY="132.0" prefHeight="36.0" prefWidth="180.0" promptText="Select type" style="-fx-background-color: #16161A; -fx-border-color: #010101; -fx-border-radius: 6; -fx-border-width: 1;" />
       <Slider fx:id="lengthSlider" blockIncrement="1.0" layoutX="405.0" layoutY="198.0" max="50.0" prefHeight="14.0" prefWidth="180.0" />
       <Label fx:id="lengthText" layoutX="405.0" layoutY="178.0" text="Length:" textFill="#fffffe" />
-      <Label fx:id="generatedPass" layoutX="139.0" layoutY="268.0" prefWidth="330.0" style="-fx-border-color: #FFFFFE; -fx-border-width: 0 0 1 0;" text="Tutaj pojawi sie wygenerowane hasło" textAlignment="CENTER" textFill="#fffffe">
+      <Label fx:id="generatedPass" contentDisplay="CENTER" layoutX="84.0" layoutY="268.0" prefWidth="440.0" style="-fx-border-color: #FFFFFE; -fx-border-width: 0 0 1 0; -fx-alignment: center;" text="Tutaj pojawi sie wygenerowane hasło" textAlignment="CENTER" textFill="#fffffe" textOverrun="CLIP" wrapText="true">
          <font>
             <Font size="14.0" />
          </font>
