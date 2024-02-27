@@ -87,6 +87,7 @@ public class HelloController implements Initializable {
        StringBuilder pass = new StringBuilder();
        StringBuilder availableChars = new StringBuilder();
        SecureRandom random = new SecureRandom();
+       Map<Character, Character> specialCharsMapping = getCharacterCharacterMap();
 
        if (lowercaseCB.isSelected()){
            availableChars.append(lowerCase);
@@ -129,17 +130,76 @@ public class HelloController implements Initializable {
                }
 
                if (!words.isEmpty()) {
+
+                   if (symbolsCB.isSelected()){
+                       passLength -= 1;
+                   }
                    do {
                        int index = random.nextInt(words.size());
                        readedWord = words.get(index);
                    }while(readedWord.length() != passLength);
 
-                   pass.append(readedWord);
+                   System.out.println(readedWord);
+                   boolean added = false;
+
+                   if (uppercaseCB.isSelected() && !lowercaseCB.isSelected()){
+                       readedWord = readedWord.toUpperCase();
+                   }
+
+                   for (char c : readedWord.toCharArray()){
+                       if (numbersCB.isSelected()){
+                           if (specialCharsMapping.containsKey(c)){
+                               pass.append(specialCharsMapping.get(c));
+                               added = true;
+                           }
+                       }
+
+                       if (uppercaseCB.isSelected() && lowercaseCB.isSelected()) {
+                           boolean rand = random.nextBoolean();
+
+                           if (!added){
+                               if (rand){
+                                   pass.append(Character.toUpperCase(c));
+                                   added = true;
+                               }
+                           }
+                       }
+
+                       if (!added){
+                           pass.append(c);
+                       }
+
+                       added = false;
+                   }
+
+                   if (symbolsCB.isSelected()){
+                       int index = random.nextInt(symbols.length());
+                       pass.append(symbols.charAt(index));
+                   }
+
+
                }
            }
        }
 
        generatedPass.setText(pass.toString());
 
+    }
+
+    private static Map<Character, Character> getCharacterCharacterMap() {
+        Map<Character, Character> specialCharsMapping = new HashMap<>();
+        specialCharsMapping.put('a', '4');
+        specialCharsMapping.put('e', '3');
+        specialCharsMapping.put('i', '1');
+        specialCharsMapping.put('s', '5');
+        specialCharsMapping.put('b', '6');
+        specialCharsMapping.put('o', '0');
+        specialCharsMapping.put('A', '4');
+        specialCharsMapping.put('E', '3');
+        specialCharsMapping.put('I', '1');
+        specialCharsMapping.put('S', '5');
+        specialCharsMapping.put('B', '6');
+        specialCharsMapping.put('O', '0');
+        return specialCharsMapping;
     }
 }
